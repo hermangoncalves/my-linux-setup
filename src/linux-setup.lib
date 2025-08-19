@@ -1,0 +1,15 @@
+#!/bin/bash
+. /etc/os-release
+
+SCRIPT_DIR="$(dirname "$0")"
+MENUS_DIR="$SCRIPT_DIR/menus"
+
+_lang_ () {
+    langfile="${LANG:0:2}"
+}
+
+_invoke_() {
+    if [[ -n "$menu" ]]; then
+        bash "$MENUS_DIR/${menu}.sh"
+    fi
+}
