@@ -1,15 +1,21 @@
 #!/bin/bash
 . /etc/os-release
 
-SCRIPT_DIR="$(dirname "$0")"
-MENUS_DIR="$SCRIPT_DIR/menus"
-
 _lang_ () {
     langfile="${LANG:0:2}"
 }
 
 _invoke_() {
-    if [[ -n "$menu" ]]; then
-        bash "$MENUS_DIR/${menu}.sh"
+    if [[ -z "$menu" ]]; then
+        fatal "No menu specified to invoke."
     fi
+
+    local url="https://raw.githubusercontent.com/hermangoncalves/my-linux-setup/main/src/menus/${menu}.sh"
+
+    # Check if remote script is reachable
+    if ! curl -fsSL "$url" >/dev/null 2>&1; then
+        fatal "Could not fetch menu script '$menu' from $url"
+    fi
+
+    source <(curl -fsSL "$url")
 }
