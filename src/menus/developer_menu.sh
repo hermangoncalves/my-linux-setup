@@ -1,12 +1,5 @@
 #!/bin/bash
 
-
-get_apps() {
-    for app in "$APPS_DIR"/*.sh; do
-        [ -f "$app" ] && source "$app" && echo "FALSE $(basename "$app" .sh)"
-    done
-}
-
 run_installation() {
     local app_name="$1"
     local url="https://raw.githubusercontent.com/hermangoncalves/my-linux-setup/main/src/apps/${app_name}.sh"

@@ -6,6 +6,7 @@ _lang_ () {
 }
 
 _invoke_() {
+    echo "Invoking"
     if [[ -z "$menu" ]]; then
         fatal "No menu specified to invoke."
     fi

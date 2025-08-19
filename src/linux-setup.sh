@@ -5,6 +5,10 @@ fatal() {
     exit 1
 }
 
+check_internet() {
+    ping -c1 google.com &>/dev/null || fatal "No internet connection. Please connect and retry."
+}
+
 source <(curl -s https://raw.githubusercontent.com/hermangoncalves/my-linux-setup/refs/heads/main/src/linux-setup.lib)
 
 _lang_
