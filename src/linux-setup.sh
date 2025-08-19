@@ -1,11 +1,12 @@
 #!/bin/bash
 . /etc/os-release
 
-source ./src/linux-setup.lib
+
+source <(curl -s https://raw.githubusercontent.com/hermangoncalves/my-linux-setup/refs/heads/main/src/linux-setup.lib)
 
 _lang_
 
-source ./src/languages/${langfile}
+source <(curl -s https://raw.githubusercontent.com/hermangoncalves/my-linux-setup/refs/heads/main/src/languages/${langfile})
 
 echo $langfile
 
