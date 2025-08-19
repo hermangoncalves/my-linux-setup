@@ -12,7 +12,6 @@ _invoke_() {
 
     local url="https://raw.githubusercontent.com/hermangoncalves/my-linux-setup/main/src/menus/${menu}.sh"
 
-    # Check if remote script is reachable
     if ! curl -fsSL "$url" >/dev/null 2>&1; then
         fatal "Could not fetch menu script '$menu' from $url"
     fi

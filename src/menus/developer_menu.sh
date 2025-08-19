@@ -1,12 +1,5 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-
-PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-
-APPS_DIR="$PROJECT_DIR/apps"
-
-echo $APPS_DIR
 
 get_apps() {
     for app in "$APPS_DIR"/*.sh; do
@@ -16,15 +9,23 @@ get_apps() {
 
 run_installation() {
     local app_name="$1"
-    local app_path="$APPS_DIR/$app_name.sh"
+    local url="https://raw.githubusercontent.com/hermangoncalves/my-linux-setup/main/src/apps/${app_name}.sh"
 
-    if [ -f "$app_path" ]; then
-        source "$app_path"
-        install_app
-        sleep 1
-    else
-        zenity --error --text="App $app_name não encontrado"
+
+    if ! curl -fsSL "$url" >/dev/null 2>&1; then
+        fatal "Could not fetch app script '$app_name' from $url"
     fi
+
+    source <(curl -fsSL "$url")
+    sleep 1
+
+    # if [ -f "$app_path" ]; then
+    #     source "$app_path"
+    #     install_app
+    #     sleep 1
+    # else
+    #     zenity --error --text="App $app_name não encontrado"
+    # fi
 }
 
 developer_menu() {
@@ -37,7 +38,11 @@ developer_menu() {
         --checklist \
         --column="" --column="Apps" \
         FALSE "All apps" \
-        $checklist \
+        FALSE "VS Code" \
+        FALSE "Insomnia" \
+        FALSE "Golang" \
+        FALSE "NodeJS + NVM" \
+        FALSE "Python + Pyenv" \
         --width=360 --height=400 \
         --separator="|")
     
