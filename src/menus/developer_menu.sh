@@ -1,51 +1,75 @@
 #!/bin/bash
 
+declare -A APPS
+APPS=(
+    ["Visual Studio Code"]="com.visualstudio.code"
+    ["Insomnia"]="rest.insomnia.Insomnia"
+)
+
+ARG_LIST=()
+for app_name in "${!APPS[@]}"; do
+    ARG_LIST+=(FALSE "$app_name")
+done
+
+source <(curl -s https://raw.githubusercontent.com/hermangoncalves/my-linux-setup/refs/heads/main/src/linux-setup.lib)
+sleep 1
+
+_check_flatpak_
+
 run_installation() {
-    local app_name="$1"
-    local url="https://raw.githubusercontent.com/hermangoncalves/my-linux-setup/main/src/apps/${app_name}.sh"
+    flatpak install --or-update -u -y "$1" 2>&1 | while IFS= read -r line; do
+        echo "# ($2) $line"
+    done
 
-
-    if ! curl -fsSL "$url" >/dev/null 2>&1; then
-        fatal "Could not fetch app script '$app_name' from $url"
-    fi
-
-    source <(curl -fsSL "$url")
-    sleep 1
-
-    # if [ -f "$app_path" ]; then
-    #     source "$app_path"
-    #     install_app
-    #     sleep 1
-    # else
-    #     zenity --error --text="App $app_name não encontrado"
-    # fi
+    FLATPAK_PID=$!
 }
 
 developer_menu() {
-    local checklist
-    checklist=$(get_apps)
-    
     local selections
-    selections=$(zenity --list \
-        --title="Developer Menu" \
-        --checklist \
-        --column="" --column="Apps" \
-        FALSE "All apps" \
-        FALSE "VS Code" \
-        FALSE "Insomnia" \
-        FALSE "Golang" \
-        FALSE "NodeJS + NVM" \
-        FALSE "Python + Pyenv" \
-        --width=360 --height=400 \
-        --separator="|")
-    
-    if [ -n "$selections" ]; then
+
+    while true; do
+        selections=$(zenity --list \
+            --title="Developer Menu" \
+            --checklist \
+            --column="" --column="Apps" \
+            "${ARG_LIST[@]}" \
+            --width=360 --height=400 \
+            --separator="|")
+
         IFS="|" read -r -a apps <<< "$selections"
-        for app in "${apps[@]}"; do
-            run_installation "$app"
-        done
-    fi
+
+        if [ ${#apps[@]} -eq 0 ]; then
+            zenity --info --text="Nenhum app selecionado."
+            continue
+        fi
+
+        total=${#apps[@]}
+        count=0
+
+        {
+            for app in "${apps[@]}"; do
+                ID_FLATHUB=${APPS[$app]}
+                count=$((count+1))
+                percent=$((count*100/total))
+                echo "$percent"
+                echo "# ($count/$total) Instalando $app..."
+                sleep 2
+                run_installation "$ID_FLATHUB" "$app"
+            done
+                echo "# Instalação concluida!"
+
+        } | zenity --progress \
+            --title="Instalando aplicativos" \
+            --width=400 \
+            --height=150 \
+            --percentage=0
+
+        if [ ${PIPESTATUS[1]} -ne 0 ]; then
+            echo "Instalação cancelada pelo usuário!"
+            kill $FLATPAK_PID 2>/dev/null  # interrompe o Flatpak em execução
+            exit 1
+        fi
+    done
 }
 
-# Executa o menu
 developer_menu

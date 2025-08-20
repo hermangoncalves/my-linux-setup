@@ -1,3 +1,6 @@
 msg001="Main Menu"
-msg002="Developer apps"
-msg003="Exit"
+msg002="Developer Apps"
+msg003="Browsers"
+msg004="Entertainment"
+msg005="Productivity"
+msg006="Exit"
