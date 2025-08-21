@@ -4,6 +4,7 @@ declare -A APPS
 APPS=(
     ["Visual Studio Code"]="com.visualstudio.code"
     ["Insomnia"]="rest.insomnia.Insomnia"
+    ["VLC"]="org.videolan.VLC"
 )
 
 ARG_LIST=()
