@@ -5,6 +5,7 @@ APPS=(
     ["Visual Studio Code"]="com.visualstudio.code"
     ["Insomnia"]="rest.insomnia.Insomnia"
     ["VLC"]="org.videolan.VLC"
+    ["Firefox"]="org.mozilla.firefox"
 )
 
 ARG_LIST=()
